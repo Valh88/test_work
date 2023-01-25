@@ -36,17 +36,13 @@ async def get(request: Request, response_class=HTMLResponse) -> HTMLResponse:
 
 
 @app.websocket("/ws/{client_id:str}")
-async def websocket_endpoint(websocket: WebSocket, client_id:str, db=db) -> None:
-    try:
-        user = db.get_user(client_id=client_id)
-    except KeyError:
-        user = db.append(client_id=client_id)
+async def websocket_endpoint(websocket: WebSocket, client_id:str) -> None:
+    num_message = 0
 
     await websocket.accept()
     while True:
-        print(DataBase.db)
         data = await websocket.receive_json()
-        user['num'] += 1
-        data['num'] = user['num']
+        num_message += 1
+        data['num'] = num_message
         #data = {'message': str, 'num': int}
         await websocket.send_json(data)
